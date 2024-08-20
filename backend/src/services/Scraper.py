@@ -9,6 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import Select
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
@@ -36,7 +37,8 @@ class Navegador:
             "LINK_TEXT": By.LINK_TEXT,
             "NAME": By.NAME,
             "PARTIAL_LINK_TEXT": By.PARTIAL_LINK_TEXT,
-            "TAG_NAME": By.TAG_NAME
+            "TAG_NAME": By.TAG_NAME,
+            "CSS_SELECTOR": By.CSS_SELECTOR
         }
 
     def get_session_id (self):
