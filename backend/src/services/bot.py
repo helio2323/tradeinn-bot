@@ -35,14 +35,12 @@ def update_all_products(bot):
 
     listas = bd.get_product_list()
 
-    elements = bot.get_elements('CLASS_NAME', 'product-listing-wrapper')
-
     for list in listas:
         
         url = list[2]
         LIST_ID = list[0]
         
-        get_products_site(LIST_ID, url)
+        get_products_site(LIST_ID, url, bot)
         
     bot.click('XPATH', '/html/body/nav/div/div[4]/div[1]')
     time.sleep(5)

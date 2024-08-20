@@ -15,6 +15,12 @@ def save_catalog(lst_id):
 
     data = bd.get_products(id_list=lst_id)  # Passe o ID da lista apropriado
 
+    prod_list = bd.get_product_list()
+    
+    for prod in prod_list:
+        if prod[0] == lst_id:
+            name_list = prod[1]
+            break
 
 
     wb = Workbook()
@@ -70,7 +76,7 @@ def save_catalog(lst_id):
             for col in range(1, ws1.max_column + 1):
                 ws1.cell(row=row, column=col).alignment = Alignment(vertical='center', horizontal='center')
 
-    arquive_name = f'./data-{time.strftime("%Y%m%d-%H%M%S")}.xlsx'
+    arquive_name = f'./{name_list}-{time.strftime("%Y%m%d-%H%M%S")}.xlsx'
 
     # Salva o arquivo Excel
     name = arquive_name

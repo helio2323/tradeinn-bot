@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.services.bot import get_products_site, login
+from src.services.bot import get_products_site, login, update_all_products
 from src.models.Sqclass import Sqclass
 from src.services.Scraper import Navegador
 from src.services.save_data import save_catalog
@@ -50,8 +50,8 @@ def main():
 
         elif choice == 2:
             print("Buscando/Atualizando todos os produtos...")
-            # Implementar a lógica para buscar/atualizar todos os produtos
-            # Example: update_all_products()
+            bot = Navegador()
+            update_all_products(bot)
             print("Todos os produtos foram atualizados.")
 
         elif choice == 3:
