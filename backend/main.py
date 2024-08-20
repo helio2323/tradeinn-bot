@@ -6,6 +6,8 @@ from src.models.Sqclass import Sqclass
 from src.services.Scraper import Navegador
 from src.services.save_data import save_catalog
 
+import time
+
 bd = Sqclass()
 
 
@@ -64,6 +66,9 @@ def main():
                     LIST_ID = list_item[0]
                     get_products_site(LIST_ID, url, bot)
                     print(f"Lista de produtos {LIST_ID} atualizada com sucesso.")
+                    bot.click('XPATH', '/html/body/nav/div/div[4]/div[1]')
+                    time.sleep(5)
+                    bot.close()
                     break
             else:
                 print("ID da lista não encontrado.")
