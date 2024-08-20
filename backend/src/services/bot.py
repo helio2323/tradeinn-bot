@@ -10,6 +10,7 @@ from src.models.Sqclass import Sqclass
 
 from src.services.Scraper import Navegador
 from src.models.Sqclass import Sqclass
+from tqdm import tqdm  # Importa a biblioteca tqdm
 
 #VARIAVEIS
 LOGIN_URL = 'https://b2b.tradeinn.com'
@@ -63,6 +64,7 @@ def image_to_binary(image_stream):
 def get_products_site(LIST_ID, url, bot):
     
     login(bot)
+    time.sleep(5)
     
     bd = Sqclass()
     
@@ -71,28 +73,18 @@ def get_products_site(LIST_ID, url, bot):
         
         elements = bot.get_elements('CLASS_NAME', 'product-listing-wrapper')
 
-        i = 1
-        refresh = 0
-
-        start_time = time.time()  # Início da medição de tempo
-
         total_elements = len(elements)
         
-        for i, element in enumerate(elements, start=1):
-            # Simulação de barra de progresso
-            progress = (i / total_elements) * 100
-            elapsed_time = time.time() - start_time
-            
-            sys.stdout.write(f"\rProgresso: [{'#' * i}{'.' * (total_elements - i)}] {int(progress)}%")
-            sys.stdout.write(f"\nTempo decorrido: {elapsed_time:.2f} segundos")
-            sys.stdout.flush()
+        start_time = time.time()  # Início da medição de tempo
 
-            xpath = f"/html/body/div[3]/div[2]/div[1]/div/main/ul/li[{i}]"
+        # Barra de progresso para elementos
+        for i, element in enumerate(tqdm(elements, desc="Processando produtos", unit="produto")):
+            
+            xpath = f"/html/body/div[3]/div[2]/div[1]/div/main/ul/li[{i + 1}]"
             
             bot.click('XPATH', xpath)
             
             title = bot.element_get_text('ID', 'name_product').text
-
             photo_src = bot.element_get_text('XPATH', '/html/body/div[3]/div[1]/div/div[2]/div[1]/div[2]/div/div[1]/img').get_attribute('src')
 
             # Baixar e converter a imagem para binário
@@ -113,7 +105,9 @@ def get_products_site(LIST_ID, url, bot):
             select = Select(drp_element)
             num_options = len(select.options)
 
-            for index in range(num_options):
+            # Barra de progresso para tamanhos
+            for index in tqdm(range(num_options), desc="Processando tamanhos", unit="tamanho", leave=False):
+                
                 select.select_by_index(index)
                 
                 size = select.first_selected_option.text
@@ -124,11 +118,9 @@ def get_products_site(LIST_ID, url, bot):
                 new_product_info = bd.insert_or_update_products_infos(option_site_id, size, price_web, price_b2b, new_product)
 
             bot.click('ID', 'js-cerrar-detalle')
-            i += 1
-            refresh += 1
             
-            if refresh == 8:
-                refresh = 0
+            # Atualiza a página a cada 8 produtos
+            if (i + 1) % 8 == 0:
                 bot.get(url)
 
         end_time = time.time()  # Fim da medição de tempo
