@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("form").on("submit", function(event) {
+                event.preventDefault();
+                var form = $(this);
+                var actionUrl = form.attr("action");
+                var formData = form.serialize();
+
+                $.get(actionUrl, formData, function(response) {
+                    $("#result").html(response);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Menu Principal</h1>
+    <ul>
+        <li><a href="{{ url_for('list_products') }}">1 - Listas de produtos</a></li>
+        <li><a href="{{ url_for('update_all_products_route') }}">2 - Buscar/Atualizar Todos Produtos</a></li>
+        <li>
+            <form action="{{ url_for('update_single_list') }}" method="get">
+                3 - Buscar/Atualizar uma Única Lista de Produtos (Insira o ID da Lista):
+                <input type="number" name="lista_id" min="1">
+                <input type="submit" value="Atualizar">
+            </form>
+        </li>
+        <li>
+            <form action="{{ url_for('generate_catalog') }}" method="get">
+                4 - Gerar Catálogo de Produtos com Base em Lista (Insira o ID da Lista):
+                <input type="number" name="lista_id" min="1">
+                <input type="submit" value="Gerar Catálogo">
+            </form>
+        </li>
+        <li><a href="{{ url_for('set_all_list_false') }}">5 - Atualizar status das listas para False</a></li>
+        <li><a href="{{ url_for('exit_app') }}">6 - Sair</a></li>
+    </ul>
+
+    <div id="result"></div>
+</body>
+</html>
