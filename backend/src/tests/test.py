@@ -90,8 +90,3 @@ def generate_pdf_from_db(id_list, html_file, pdf_file):
     convert_html_to_pdf(html_file, pdf_file)
 
 
-# Exemplo de uso
-id_list = 1  # Substitua pelo ID da lista desejada
-html_file = './Catalogo/catalog.html'
-pdf_file = './catalog.pdf'
-generate_pdf_from_db(id_list, html_file, pdf_file)

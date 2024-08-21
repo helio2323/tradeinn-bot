@@ -91,7 +91,7 @@ def main():
                     name_list = prod[1]
                     break
             
-            generate_pdf_from_db(lista_id, f'./backend/Catalogo/{name_list}.html', f'./backend/Catalogo/{name_list}.pdf')
+            generate_pdf_from_db(lista_id, f'./Catalogo/{lista_id}-{name_list}.html', f'./Catalogo/{lista_id}-{name_list}.pdf')
             
             print(f"Catálogo para a lista {lista_id} gerado com sucesso.")
         

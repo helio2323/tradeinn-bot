@@ -85,9 +85,9 @@ def save_catalog(lst_id):
     ws1.column_dimensions['B'].width = 50  # Ajusta a largura da coluna 'B'
    
     
-    save_directory = './backend/Catalogo' # Substitua pelo caminho desejado
+    save_directory = './Catalogo' # Substitua pelo caminho desejado
     os.makedirs(save_directory, exist_ok=True)
-    arquive_name = os.path.join(save_directory, f'{name_list}-{time.strftime("%Y%m%d-%H%M%S")}.xlsx')
+    arquive_name = os.path.join(save_directory, f'{lst_id}-{name_list}.xlsx')
 
     # Salva o arquivo Excel
     wb.save(filename=arquive_name)
