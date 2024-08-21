@@ -40,7 +40,12 @@ def update_all_products(bot):
         url = list[2]
         LIST_ID = list[0]
         
-        get_products_site(LIST_ID, url, bot)
+        if list[3] == 0:
+            print(f'Iniciando a lista {LIST_ID}')
+            
+            get_products_site(LIST_ID, url, bot)
+        
+            bd.update_status_list(LIST_ID)
         
     bot.click('XPATH', '/html/body/nav/div/div[4]/div[1]')
     time.sleep(5)
@@ -70,6 +75,8 @@ def get_products_site(LIST_ID, url, bot):
         bot.get(url)
         
         elements = bot.get_elements('CLASS_NAME', 'product-listing-wrapper')
+        if elements is None:
+            elements = bot.get_elements('CLASS_NAME', 'ais-InfiniteHits-item')
 
         total_elements = len(elements)
         
@@ -77,11 +84,9 @@ def get_products_site(LIST_ID, url, bot):
 
         # Barra de progresso para elementos
         for i, element in enumerate(tqdm(elements, desc="Processando produtos", unit="produto")):
-            
-            xpath = f"/html/body/div[3]/div[2]/div[1]/div/main/ul/li[{i + 1}]"
-            
-            bot.click('XPATH', xpath)
-            
+                                        
+            elements[i].click()
+                        
             title = bot.element_get_text('ID', 'name_product').text
             photo_src = bot.element_get_text('XPATH', '/html/body/div[3]/div[1]/div/div[2]/div[1]/div[2]/div/div[1]/img').get_attribute('src')
 
@@ -92,11 +97,23 @@ def get_products_site(LIST_ID, url, bot):
             except Exception as e:
                 print(f"Erro ao baixar ou converter imagem: {e}")
                 img_binary = None  # Use None se a imagem não puder ser baixada ou convertida
-
-            product_site_id = bot.element_get_text('XPATH', xpath).get_attribute('data-id_modelo')
             
+            
+            script = """
+                var element = document.getElementById('id_modelo');
+                if (element) {
+                    element.removeAttribute('hidden');  // Remove o atributo 'hidden' se ele existir
+                    element.setAttribute('type', 'text');  // Altera o tipo para 'text'
+                }
+                """
+            
+            bot.driver.execute_script(script)
+            product_site_id = bot.element_get_text('ID', 'id_modelo')
+
+            product_site_id = product_site_id.get_attribute('value')
+                                    
             # Salvar no BD, incluindo a imagem binária
-            new_product = bd.insert_or_update_product(title, photo_src, product_site_id, LIST_ID, img_binary)
+            new_product = bd.insert_or_update_product(title, photo_src, product_site_id, LIST_ID, img_binary, True)
             
             # Salvar listas
             drp_element = bot.get_elements('ID', 'tallas_productos')[0]
@@ -120,6 +137,9 @@ def get_products_site(LIST_ID, url, bot):
             # Atualiza a página a cada 8 produtos
             if (i + 1) % 8 == 0:
                 bot.get(url)
+                elements = bot.get_elements('CLASS_NAME', 'product-listing-wrapper')
+                if elements is None:
+                    elements = bot.get_elements('CLASS_NAME', 'ais-InfiniteHits-item')
 
         end_time = time.time()  # Fim da medição de tempo
         execution_time = end_time - start_time  # Cálculo do tempo de execução 

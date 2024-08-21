@@ -1,4 +1,6 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -14,6 +16,9 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 
+
+
+
 class Navegador:
     def __init__(self):
         # Configurar opções do Chrome
@@ -23,11 +28,12 @@ class Navegador:
         options.add_argument("--disable-notifications")
         options.add_argument("--disable-popup-blocking")
         options.add_argument("--kiosk-printing")
-
-
+        
+        self.servico = Service(ChromeDriverManager().install())
+        
         # Inicializar o WebDriver do Chrome com as opções configuradas
         #self.driver = webdriver.Remote(command_executor="http://localhost:4444/wd/hub", options=options)
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(service=self.servico, options=options)
         self.wait = WebDriverWait(self.driver, 10)
         self.by = By
         self.locator = {
