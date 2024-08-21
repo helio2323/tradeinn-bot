@@ -86,6 +86,27 @@ class Sqclass:
                             WHERE products.id_list = ?
                             """, (id_list,))
         return self.cursor.fetchall()
+    
+    def get_prod_xlsx(self, id_list):
+        self.cursor.execute("""
+                            SELECT products.id, products.title, products.image, products_infos.price_b2b
+                            FROM products
+                            INNER JOIN products_infos
+                            ON products.id = products_infos.id_product
+                            WHERE products.id_list = ?
+                            """, (id_list,))
+        return self.cursor.fetchall()
+
+    def get_prod_pdf(self, id_list):
+        self.cursor.execute("""
+                            SELECT products.id, products.title, products.photo_src, products_infos.price_b2b
+                            FROM products
+                            INNER JOIN products_infos
+                            ON products.id = products_infos.id_product
+                            WHERE products.id_list = ?
+                            """, (id_list,))
+        return self.cursor.fetchall()
+
 
     
     # Método para inserir dados na tabela products verifica se o produto ja existe comparando o product_site_id caso exista faz o update

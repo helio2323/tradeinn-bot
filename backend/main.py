@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from src.services.bot import get_products_site, login, update_all_products
 from src.models.Sqclass import Sqclass
 from src.services.Scraper import Navegador
-from src.services.save_data import save_catalog
+from src.services.save_data import save_catalog, generate_pdf_from_db
 
 import time
 
@@ -83,6 +83,16 @@ def main():
         elif choice == 4:
             lista_id = int(input('Informe o número da lista que deseja gerar o catálogo: '))
             save_catalog(lista_id)
+            
+            prod_list = bd.get_product_list()
+    
+            for prod in prod_list:
+                if prod[0] == lista_id:
+                    name_list = prod[1]
+                    break
+            
+            generate_pdf_from_db(lista_id, f'./backend/Catalogo/{name_list}.html', f'./backend/Catalogo/{name_list}.pdf')
+            
             print(f"Catálogo para a lista {lista_id} gerado com sucesso.")
         
         elif choice == 5:

@@ -7,17 +7,19 @@ from io import BytesIO
 from PIL import Image as PILImage
 from selenium.webdriver.support.ui import Select
 from src.models.Sqclass import Sqclass
+from src.utils.gpb_brl import calcular_preco_em_brl, get_GPB_to_BRL
 
 from src.services.Scraper import Navegador
 from src.models.Sqclass import Sqclass
 from tqdm import tqdm  # Importa a biblioteca tqdm
+from dotenv import load_dotenv
+
+load_dotenv()
 
 #VARIAVEIS
-LOGIN_URL = 'https://b2b.tradeinn.com'
-USER_EMAIL = 'vendas@oldfirm.com.br'
-USER_PASSWORD = 'Kohlrauschrs18!G'
-
-
+LOGIN_URL = os.getenv('LOGIN_URL')
+USER_EMAIL = os.getenv('USER_EMAIL')
+USER_PASSWORD = os.getenv('USER_PASSWORD')
 
 def login(bot):
         
@@ -65,6 +67,8 @@ def image_to_binary(image_stream):
             return output.getvalue()
 
 def get_products_site(LIST_ID, url, bot):
+    
+    BRL = get_GPB_to_BRL()
     
     login(bot)
     time.sleep(5)
@@ -127,8 +131,8 @@ def get_products_site(LIST_ID, url, bot):
                 
                 size = select.first_selected_option.text
                 option_site_id = select.first_selected_option.get_attribute('value')
-                price_web = bot.element_get_text('ID', 'precio_web').text
-                price_b2b = bot.element_get_text('ID', 'precio_b2b').text
+                price_web = calcular_preco_em_brl(bot.element_get_text('ID', 'precio_web').text, BRL)
+                price_b2b = calcular_preco_em_brl(bot.element_get_text('ID', 'precio_b2b').text, BRL)
                 
                 new_product_info = bd.insert_or_update_products_infos(option_site_id, size, price_web, price_b2b, new_product)
 
