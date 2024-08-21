@@ -48,6 +48,8 @@ def update_all_products(bot):
             get_products_site(LIST_ID, url, bot)
         
             bd.update_status_list(LIST_ID)
+   
+    print("Todos os produtos foram atualizados.")
         
     bot.click('XPATH', '/html/body/nav/div/div[4]/div[1]')
     time.sleep(5)
