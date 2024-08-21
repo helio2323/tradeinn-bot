@@ -1,13 +1,10 @@
-import sys
 import os
-import time
-from tqdm import tqdm  # Importa a biblioteca tqdm
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image as ExcelImage
 from openpyxl.styles import Alignment
 from PIL import Image as PILImage
 from src.models.Sqclass import Sqclass
+from tqdm import tqdm
 
 def save_catalog(lst_id):
     bd = Sqclass()
@@ -38,7 +35,7 @@ def save_catalog(lst_id):
         product_id, title, image_binary, price_b2b = row
         
         # Verifique se price_b2b não está vazio ou nulo
-        print(f"Processing: ID={product_id}, Title={title}, Price B2B={price_b2b}")
+       # print(f"Processing: ID={product_id}, Title={title}, Price B2B={price_b2b}")
 
         # Salva a imagem temporariamente
         image_path = None
@@ -64,7 +61,6 @@ def save_catalog(lst_id):
             excel_row.append("No Image")
 
         # Adiciona o preço B2B à linha
-        excel_row.append(1)
         excel_row.append(price_b2b)
         ws1.append(excel_row)
         
@@ -84,10 +80,13 @@ def save_catalog(lst_id):
     ws1.column_dimensions['A'].width = 15  # Ajusta a largura da coluna 'A'
     ws1.column_dimensions['B'].width = 50  # Ajusta a largura da coluna 'B'
    
-    
-    save_directory = './Catalogo' # Substitua pelo caminho desejado
+    save_directory = './Catalogo'
+    # Garante que o diretório de salvamento exista
     os.makedirs(save_directory, exist_ok=True)
-    arquive_name = os.path.join(save_directory, f'{lst_id}-{name_list}.xlsx')
+    
+    # Limpa caracteres inválidos do nome do arquivo
+    safe_name_list = "".join(c for c in name_list if c.isalnum() or c in [' ', '-'])
+    arquive_name = os.path.join(save_directory, f'{lst_id}-{safe_name_list}.xlsx')
 
     # Salva o arquivo Excel
     wb.save(filename=arquive_name)
@@ -98,9 +97,8 @@ def save_catalog(lst_id):
     os.rmdir(temp_image_folder)
 
 
-import sys
+
 import os
-import requests
 from jinja2 import Template
 from src.models.Sqclass import Sqclass
 import weasyprint
@@ -169,15 +167,32 @@ def generate_html_from_db(id_list, html_file):
     # Renderiza o HTML com os dados do banco
     html_content = template.render(data=data)
     
-    # Salva o HTML em um arquivo
-    with open(html_file, 'w') as file:
-        file.write(html_content)
+    # Garante que o diretório de salvamento exista
+    save_directory = os.path.dirname(html_file)
+    os.makedirs(save_directory, exist_ok=True)
     
-def convert_html_to_pdf(html_file, pdf_file):
-    # Converte o HTML para PDF
-    weasyprint.HTML(html_file).write_pdf(pdf_file)
+    # Salva o HTML em um arquivo
+    try:
+        with open(html_file, 'w') as file:
+            file.write(html_content)
+    except IOError as e:
+        print(f"Erro ao salvar o arquivo HTML: {e}")
+        raise
 
-# Função principal para gerar HTML e PDF
+def convert_html_to_pdf(html_file, pdf_file):
+    print("Convertendo HTML para PDF... aguarde...")
+    try:
+        weasyprint.HTML(html_file).write_pdf(pdf_file)
+        print('PDF gerado com sucesso!!')
+    except Exception as e:
+        print(f"Erro ao converter HTML para PDF: {e}")
+        raise
+
 def generate_pdf_from_db(id_list, html_file, pdf_file):
-    generate_html_from_db(id_list, html_file)
-    convert_html_to_pdf(html_file, pdf_file)
+    try:
+        generate_html_from_db(id_list, html_file)
+        convert_html_to_pdf(html_file, pdf_file)
+    except Exception as e:
+        print(f"Erro ao gerar o PDF: {e}")
+        raise
+
