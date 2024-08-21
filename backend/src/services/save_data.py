@@ -101,10 +101,9 @@ def save_catalog(lst_id):
 import sys
 import os
 import requests
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from jinja2 import Template
-import pdfkit
 from src.models.Sqclass import Sqclass
+import weasyprint
 
 def generate_html_from_db(id_list, html_file):
     bd = Sqclass()
@@ -174,15 +173,9 @@ def generate_html_from_db(id_list, html_file):
     with open(html_file, 'w') as file:
         file.write(html_content)
     
-    
-
 def convert_html_to_pdf(html_file, pdf_file):
-    # Configura o caminho para o executável wkhtmltopdf, ajuste conforme necessário
-    path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Atualize conforme necessário
-    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
-    
     # Converte o HTML para PDF
-    pdfkit.from_file(html_file, pdf_file, configuration=config)
+    weasyprint.HTML(html_file).write_pdf(pdf_file)
 
 # Função principal para gerar HTML e PDF
 def generate_pdf_from_db(id_list, html_file, pdf_file):
