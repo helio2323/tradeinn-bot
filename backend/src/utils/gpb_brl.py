@@ -1,39 +1,25 @@
-def get_GPB_to_BRL():
-    import requests
-    from bs4 import BeautifulSoup
 
-    # Fazer a requisição GET
-    url = 'https://www.xe.com/en-gb/currencyconverter/convert/?Amount=1&From=GBP&To=BRL'
-    response = requests.get(url)
+import requests       # Biblioteca para trabalhar com requisições 
+import json           # Biblioteca para transformar a resposta da requisição em um dicionario Python
 
-    # Verificar se a requisição foi bem-sucedida
-    if response.status_code == 200:
-        # Analisar o conteúdo da página com BeautifulSoup
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        # Localizar o elemento <p> que contém o valor da moeda
-        value_element = soup.find('p', class_='sc-e08d6cef-1 fwpLse')
-        
-        # Extrair o texto do elemento, se encontrado
-        if value_element:
-            # Extrair o texto principal e o valor adicional dentro do <span>
-            main_value = value_element.contents[0].strip()
-            faded_digits = value_element.find('span', class_='faded-digits').text.strip()
-            
-            # Combinar os valores
-            currency_value = main_value + faded_digits
-            print(f"O valor da conversão é: {currency_value} BRL")
-            return currency_value
-        else:
-            print("Não foi possível encontrar o valor da moeda.")
-    else:
-        print(f"Erro ao fazer a requisição: {response.status_code}")
-
+def get_GPB_to_BRL(moeda='GBP-BRL'):
+    url_api = f'https://economia.awesomeapi.com.br/last/{moeda}'   # URL da API passando o parâmetro
+    req = requests.get(url_api)                                    # Realizar o Request
+    
+    req = json.loads(req.content)
+    
+    response = req['GBPBRL']['bid']
+    # Transformar em dicionario
+    print(f"O valor da conversão é: {response} BRL")
+    
+    return  response   
 
 def calcular_preco_em_brl(preco_gbp, cotacao_gbp_brl):
     
     preco_gbp = float(preco_gbp)
     cotacao_gbp_brl = float(cotacao_gbp_brl)
+    
+    frete = 6
     
     # Definir as faixas de preço e as taxas adicionais correspondentes
     if 1 <= preco_gbp <= 15:
@@ -60,10 +46,12 @@ def calcular_preco_em_brl(preco_gbp, cotacao_gbp_brl):
         raise ValueError("Faixa de preço fora do escopo definido.")
 
     # Calcular o preço em BRL
-    preco_brl = (preco_gbp + taxa_adicional) * (1 + 0.023 + 0.053) * cotacao_gbp_brl
+    preco_brl = (preco_gbp + taxa_adicional + frete) * (1 + 0.023 + 0.053) * cotacao_gbp_brl
     # converte 2 casas decimais
     preco_brl = round(preco_brl, 2)
 
     return preco_brl
 
-
+                          # Transformar em dicionario
+                             # Transformar em dicionario
+  
