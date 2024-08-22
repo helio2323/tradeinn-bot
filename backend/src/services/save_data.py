@@ -23,7 +23,7 @@ def save_catalog(lst_id):
     ws1.title = "Sheet1"
 
     # Adiciona cabeçalhos
-    headers = ["ID", "Title", "Image", "Price B2B"]
+    headers = ["ID", "Descrição", "Foto", "Valor R$"]
     ws1.append(headers)
 
     # Pasta temporária para armazenar imagens
@@ -61,6 +61,7 @@ def save_catalog(lst_id):
             excel_row.append("No Image")
 
         # Adiciona o preço B2B à linha
+        excel_row.append(1)
         excel_row.append(price_b2b)
         ws1.append(excel_row)
         

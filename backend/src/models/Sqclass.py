@@ -97,25 +97,43 @@ class Sqclass:
         with self.get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT products.id, products.title, products.image, products_infos.price_b2b
-                FROM products
-                INNER JOIN products_infos
-                ON products.id = products_infos.id_product
-                WHERE products.id_list = ?
+                SELECT 
+                    products.id, 
+                    products.title, 
+                    products.image, 
+                    MIN(products_infos.price_b2b) || ' - ' || MAX(products_infos.price_b2b) AS price_range
+                FROM 
+                    products
+                INNER JOIN 
+                    products_infos ON products.id = products_infos.id_product
+                WHERE 
+                    products.id_list = ?
+                GROUP BY 
+                    products.id, products.title, products.image
             """, (id_list,))
             return cursor.fetchall()
+
 
     def get_prod_pdf(self, id_list):
         with self.get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT products.id, products.title, products.photo_src, products_infos.price_b2b
-                FROM products
-                INNER JOIN products_infos
-                ON products.id = products_infos.id_product
-                WHERE products.id_list = ?
+                SELECT 
+                    products.id, 
+                    products.title, 
+                    products.photo_src, 
+                    MIN(products_infos.price_b2b) || ' - ' || MAX(products_infos.price_b2b) AS price_range
+                FROM 
+                    products
+                INNER JOIN 
+                    products_infos ON products.id = products_infos.id_product
+                WHERE 
+                    products.id_list = ?
+                GROUP BY 
+                    products.id, products.title, products.photo_src
             """, (id_list,))
             return cursor.fetchall()
+
     
     def insert_or_update_product(self, title, photo_src, product_site_id, id_list, image_binary, updated=0):
         with self.get_db_connection() as conn:
