@@ -101,7 +101,7 @@ def save_catalog(lst_id):
 import os
 from jinja2 import Template
 from src.models.Sqclass import Sqclass
-import weasyprint
+#import weasyprint
 
 def generate_html_from_db(id_list, html_file):
     bd = Sqclass()
@@ -179,19 +179,19 @@ def generate_html_from_db(id_list, html_file):
         print(f"Erro ao salvar o arquivo HTML: {e}")
         raise
 
-def convert_html_to_pdf(html_file, pdf_file):
+"""def convert_html_to_pdf(html_file, pdf_file):
     print("Convertendo HTML para PDF... aguarde...")
     try:
         weasyprint.HTML(html_file).write_pdf(pdf_file)
         print('PDF gerado com sucesso!!')
     except Exception as e:
         print(f"Erro ao converter HTML para PDF: {e}")
-        raise
+        raise"""
 
 def generate_pdf_from_db(id_list, html_file, pdf_file):
     try:
         generate_html_from_db(id_list, html_file)
-        convert_html_to_pdf(html_file, pdf_file)
+       # convert_html_to_pdf(html_file, pdf_file)
     except Exception as e:
         print(f"Erro ao gerar o PDF: {e}")
         raise
