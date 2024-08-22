@@ -142,9 +142,9 @@ def generate_html_from_db(id_list, html_file):
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Image</th>
-                    <th>Price B2B</th>
+                    <th>Descrição</th>
+                    <th>Foto</th>
+                    <th>Valor</th>
                 </tr>
             </thead>
             <tbody>
