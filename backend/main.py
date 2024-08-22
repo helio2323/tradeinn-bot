@@ -1,7 +1,7 @@
 import sys
 import os
 import requests
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 from src.services.bot import get_products_site, login, update_all_products
 from src.models.Sqclass import Sqclass
 from src.services.Scraper import Navegador
