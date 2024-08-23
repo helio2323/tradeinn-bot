@@ -170,6 +170,7 @@ def generate_html_from_db(id_list, html_file):
     
     # Garante que o diretório de salvamento exista
     save_directory = os.path.dirname(html_file)
+    print(save_directory)
     os.makedirs(save_directory, exist_ok=True)
     
     # Salva o HTML em um arquivo
